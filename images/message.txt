@@ -1,0 +1,156 @@
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <ctime>
+//#include"../SFML/Images/"
+using namespace sf;
+using namespace std;
+
+
+
+//Drawing the background
+void createBack() {
+	//Drawing the background
+	Image map_image;
+	map_image.loadFromFile("Images/backwindow.jpg");
+	Texture map;
+	map.loadFromImage(map_image);
+	Sprite s_map;
+	s_map.setTexture(map);
+	s_map.setPosition(0, 0);
+
+}
+
+//Drawing the map
+void createMap(RenderWindow& window) {
+	//Drawing a map
+	Image map_image;
+	map_image.loadFromFile("Images/grid.png");//load the file for the map
+	Texture map;
+	map.loadFromImage(map_image);
+	Sprite s_map;
+	s_map.setTexture(map);
+	s_map.setPosition(300, 160);
+
+	window.draw(s_map);
+}
+
+
+int main()
+{
+	//Create a window, n*n
+	RenderWindow window(VideoMode(800, 429), "Plants Vs Zombies");
+	window.setMouseCursorVisible(false); // Hide cursor
+	//Game icon
+	Image icon;
+	if (!icon.loadFromFile("Images/icon.png"))
+	{
+		return 1;
+	}
+	window.setIcon(32, 32, icon.getPixelsPtr());
+
+	sf::Texture cursorTexture;
+	if (!cursorTexture.loadFromFile("Images/shovel.png"))
+		return 1; // Load your custom cursor image
+
+	sf::Sprite cursor(cursorTexture);
+	cursor.setScale(0.5, 0.5);
+
+	Image map_image_back;
+	//map_image_back.loadFromFile("C:/Users/PC/Desktop/OOP-Project/OOP-Project/Images/Game_field.png");//load the file for the map
+	map_image_back.loadFromFile("Images/background2.png");//load the file for the map
+	Texture map_back;
+	map_back.loadFromImage(map_image_back);
+	Sprite s_map_back;
+	s_map_back.setTexture(map_back);
+	s_map_back.setPosition(0, 0);
+
+	Image map_image_shop;
+	//map_image_shop.loadFromFile("C:/Users/PC/Desktop/OOP-Project/OOP-Project/Images/Game_field.png");//load the file for the map
+	map_image_shop.loadFromFile("Images/shop.png");//load the file for the map
+	Texture map_shop;
+	map_shop.loadFromImage(map_image_shop);
+	Sprite s_map_shop;
+	s_map_shop.setTexture(map_shop);
+	s_map_shop.setPosition(0, 0);
+
+	///////////////////////////////////////
+
+	//Game field (5*9)
+	//Point 137*79 - leftmost point
+	//length 41; width 53
+	const int ROWS = 5;
+	const int COLS = 9;
+
+	bool FIELD_GAME_STATUS[ROWS][COLS];
+
+	for (int i = 0; i < ROWS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			FIELD_GAME_STATUS[i][j] = true;
+		}
+	}
+
+	Clock timeMoney;
+
+	Clock clock;
+	float animationSpeed = 0.125f;
+
+	sf::Texture peaTexture;
+	peaTexture.loadFromFile("Images/Peashooter.png");
+	sf::IntRect peaShooterRect(0, 0, 108, 130);
+	sf::Sprite peaShooterSprite(peaTexture, peaShooterRect);
+	peaShooterSprite.setScale(0.5f, 0.5f);
+
+	while (window.isOpen())
+	{
+
+		if (clock.getElapsedTime().asSeconds() > animationSpeed) {
+			if (peaShooterRect.left >= 756)
+				peaShooterRect.left = 0;
+			else
+				peaShooterRect.left += 108;
+
+			peaShooterSprite.setTextureRect(peaShooterRect);
+			clock.restart();
+		}
+
+		float time = clock.getElapsedTime().asMicroseconds();
+		float moneyTime = timeMoney.getElapsedTime().asSeconds();
+
+		//clock.restart();
+		//time = time / 800;
+
+		Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == Event::Closed)
+				window.close();
+
+			// Handle mouse button press
+			if (event.type == Event::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == Mouse::Left)
+				{
+					// Left mouse button is pressed
+					// Add your logic here (e.g., shoot, select, etc.)
+					cout << Mouse::getPosition(window).x << " , " << Mouse::getPosition(window).y << "  ";
+				}
+			}
+		}
+
+		// Get mouse position
+		Vector2i mousePosition = Mouse::getPosition(window);
+
+		window.clear();
+		window.draw(s_map_back);
+		window.draw(s_map_shop);
+		window.draw(peaShooterSprite);
+
+		cursor.setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window)));
+
+		window.draw(cursor);
+
+		//window.setSize(sf::Vector2u(1170, 604.5));
+		window.display();
+	}
+	return 0;
+}
