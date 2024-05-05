@@ -3,6 +3,8 @@
 #define SIMPLEZOMBIE_H
 #include "Zombie.h"
 
+class Zombie;
+
 class SimpleZombie : public Zombie {
 public:
     SimpleZombie(int x = 720, int y = 230);

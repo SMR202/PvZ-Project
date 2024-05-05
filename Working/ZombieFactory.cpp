@@ -1,5 +1,5 @@
 #include "ZombieFactory.h"
-
+#include "SimpleZombie.h"
 ZombieFactory::ZombieFactory() : zombiesCount(0) {
     for (int i = 0; i < MAX_ZOMBIES; ++i) {
         this->zombies[i] = nullptr;

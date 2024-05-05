@@ -1,11 +1,10 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <ctime>
+#include "Game.h"
+//#include"../SFML/Images/"
 using namespace sf;
 using namespace std;
-
-#include "Game.h"
-
 
 
 
@@ -52,6 +51,7 @@ void runSprite(Clock& clock, float animationSpeed, IntRect& textureRect, Sprite&
 
 int main()
 {
+	srand(time(0));
 	//Create a window, n*n
 	RenderWindow window(VideoMode(800, 429), "Plants Vs Zombies");
 	window.setMouseCursorVisible(false); // Hide cursor
@@ -243,7 +243,6 @@ int main()
 
 	while (window.isOpen())
 	{
-
 		/*runSprite(clock1, animationSpeed, peaShooterRect, peaShooterSprite, 756, 108);
 		runSprite(clock2, animationSpeed, snowPeaShooterRect, snowPeaShooterSprite, 863, 127);
 		runSprite(clock3, animationSpeed, repeaterShooterRect, repeaterShooterSprite, 597, 159);
@@ -263,7 +262,7 @@ int main()
 		//clock.restart();
 		//time = time / 800;
 
-		pvz.getLevel().getZombieFactory().createZombie("simpleZombie");
+		//pvz.getLevel().getZombieFactory().createZombie("simpleZombie");
 
 		Event event;
 		while (window.pollEvent(event))
@@ -368,15 +367,24 @@ int main()
 				if (pvz.getGrid().getTile(i, j).getPlant() != nullptr) {
 					pvz.getGrid().getTile(i, j).getPlant()->getSprite().setPosition(pvz.getGrid().getTile(i, j).getPlant()->getPosition().x, pvz.getGrid().getTile(i, j).getPlant()->getPosition().y);
 					runSprite(pvz.getGrid().getTile(i, j).getPlant()->getClock(), animationSpeed, pvz.getGrid().getTile(i, j).getPlant()->getRect(), pvz.getGrid().getTile(i, j).getPlant()->getSprite(), pvz.getGrid().getTile(i, j).getPlant()->getlimitX(), pvz.getGrid().getTile(i, j).getPlant()->getIncrementX());
-					window.draw(pvz.getGrid().getTile(i, j).getPlant()->getSprite());
+					pvz.getGrid().getTile(i, j).getPlant()->drawPlant(window);
+					pvz.getGrid().getTile(i, j).getPlant()->attack(pvz.getLevel().getZombieFactory());
 				}
 			}
 		}
 
-
-		window.draw(pvz.getLevel().getZombieFactory().getZombie(0)->getSprite());
-		runSprite(clock6, animationSpeed, pvz.getLevel().getZombieFactory().getZombie(0)->getRect(), pvz.getLevel().getZombieFactory().getZombie(0)->getSprite(), 560, 95);
-		pvz.getLevel().getZombieFactory().getZombie(0)->move();
+		for (int i = 0; i < MAX_ZOMBIES; i++) {
+			if (pvz.getLevel().getZombieFactory().getZombie(i) != nullptr) {
+				window.draw(pvz.getLevel().getZombieFactory().getZombie(i)->getSprite());
+				runSprite(pvz.getLevel().getZombieFactory().getZombie(i)->getAnimationClock(), animationSpeed, pvz.getLevel().getZombieFactory().getZombie(i)->getRect(), pvz.getLevel().getZombieFactory().getZombie(i)->getSprite(), 560, 95);
+				pvz.getLevel().getZombieFactory().getZombie(i)->move();
+				pvz.getLevel().getZombieFactory().getZombie(i)->attack(pvz.getLevel().getPlantFactory());
+			}
+			else {
+				//cout << "Creating zombie" << endl;
+				pvz.getLevel().getZombieFactory().createZombie("simpleZombie");
+			}
+		}
 
 		if (sunNum > 15) {
 			sunNum = 0;

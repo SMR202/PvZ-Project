@@ -1,4 +1,10 @@
 #include "PlantFactory.h"
+#include "Peashooter.h"
+#include "Sunflower.h"
+#include "SnowPeashooter.h"
+#include "RepeaterShooter.h"
+#include "Walnut.h"
+#include "CherryBomb.h"
 
 PlantFactory::PlantFactory(int lvl) : index(0), numPlants(0) {
     for (int i = 0; i < MAX_PLANTS; i++) {

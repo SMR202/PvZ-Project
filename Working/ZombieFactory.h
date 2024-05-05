@@ -2,9 +2,11 @@
 #ifndef ZOMBIEFACTORY_H
 #define ZOMBIEFACTORY_H
 #include "Zombie.h"
-#include "SimpleZombie.h"
 #include <SFML/System/Clock.hpp>
 #include "Constants.h"
+
+class Zombie;
+
 class ZombieFactory {
 protected:
     Zombie* zombies[MAX_ZOMBIES];

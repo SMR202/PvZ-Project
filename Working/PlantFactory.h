@@ -3,17 +3,15 @@
 #define PLANTFACTORY_H
 
 #include "Plant.h"
-#include "Sunflower.h"
-#include "Peashooter.h"
-#include "Walnut.h"
-#include "CherryBomb.h"
-#include "SnowPeashooter.h"
-#include "Repeatershooter.h"
-
 #include "Constants.h"
 using namespace std;
-
 class Plant;
+class Sunflower;
+class Peashooter;
+class Walnut;
+class CherryBomb;
+class SnowPeashooter;
+class Repeatershooter;
 
 class PlantFactory {
 protected:
