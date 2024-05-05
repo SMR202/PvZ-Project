@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <ctime>
-#include "Header.h"
+#include "Game.h"
 //#include"../SFML/Images/"
 using namespace sf;
 using namespace std;
@@ -339,7 +339,7 @@ int main()
 
 		// Get mouse position
 		Vector2i mousePosition = Mouse::getPosition(window);
-		
+
 
 
 		window.clear();
@@ -362,50 +362,61 @@ int main()
 		window.draw(repeaterSeedSprite);
 		window.draw(cherryBombSeedSprite);
 
+		for (int i = 0; i < MAX_PLANTS; i++) {
+			if (pvz.getLevel().getPlantFactory().getPlant(i) != nullptr) {
+				pvz.getLevel().getPlantFactory().getPlant(i)->getSprite().setPosition(pvz.getLevel().getPlantFactory().getPlant(i)->getPosition().x, pvz.getLevel().getPlantFactory().getPlant(i)->getPosition().y);
+				runSprite(pvz.getLevel().getPlantFactory().getPlant(i)->getClock(), animationSpeed, pvz.getLevel().getPlantFactory().getPlant(i)->getRect(), pvz.getLevel().getPlantFactory().getPlant(i)->getSprite(), pvz.getLevel().getPlantFactory().getPlant(i)->getlimitX(), pvz.getLevel().getPlantFactory().getPlant(i)->getIncrementX());
+				pvz.getLevel().getPlantFactory().getPlant(i)->drawPlant(window);
+				pvz.getLevel().getPlantFactory().getPlant(i)->attack(pvz.getLevel().getZombieFactory());
+			}
+			else {
+				//cout << "Creating plant" << endl;
+				//pvz.getGrid().getTile(i, j).addPlant(pvz.getLevel().getPlantFactory().createPlant("peaShooter", Mouse::getPosition(window).x, Mouse::getPosition(window).y));
+			}
+		}
+
 		for (int i = 0; i < ROWS; i++) {
 			for (int j = 0; j < COLS; j++) {
-				if (pvz.getGrid().getTile(i, j).getPlant() != nullptr) {
-					pvz.getGrid().getTile(i, j).getPlant()->getSprite().setPosition(pvz.getGrid().getTile(i, j).getPlant()->getPosition().x, pvz.getGrid().getTile(i, j).getPlant()->getPosition().y);
-					runSprite(pvz.getGrid().getTile(i, j).getPlant()->getClock(), animationSpeed, pvz.getGrid().getTile(i, j).getPlant()->getRect(), pvz.getGrid().getTile(i, j).getPlant()->getSprite(), pvz.getGrid().getTile(i, j).getPlant()->getlimitX(), pvz.getGrid().getTile(i, j).getPlant()->getIncrementX());
-					pvz.getGrid().getTile(i, j).getPlant()->drawPlant(window);
-					pvz.getGrid().getTile(i, j).getPlant()->attack(pvz.getLevel().getZombieFactory());
+				if (pvz.getGrid().getTile(i, j).getPlant() == nullptr) {
+					FIELD_GAME_STATUS[i][j] = true;
 				}
 			}
-		}
 
-		for (int i = 0; i < MAX_ZOMBIES; i++) {
-			if (pvz.getLevel().getZombieFactory().getZombie(i) != nullptr) {
-				window.draw(pvz.getLevel().getZombieFactory().getZombie(i)->getSprite());
-				runSprite(pvz.getLevel().getZombieFactory().getZombie(i)->getAnimationClock(), animationSpeed, pvz.getLevel().getZombieFactory().getZombie(i)->getRect(), pvz.getLevel().getZombieFactory().getZombie(i)->getSprite(), 560, 95);
-				pvz.getLevel().getZombieFactory().getZombie(i)->move();
-				pvz.getLevel().getZombieFactory().getZombie(i)->attack(pvz.getLevel().getPlantFactory());
+			for (int i = 0; i < MAX_ZOMBIES; i++) {
+				if (pvz.getLevel().getZombieFactory().getZombie(i) != nullptr) {
+					window.draw(pvz.getLevel().getZombieFactory().getZombie(i)->getSprite());
+					runSprite(pvz.getLevel().getZombieFactory().getZombie(i)->getAnimationClock(), animationSpeed, pvz.getLevel().getZombieFactory().getZombie(i)->getRect(), pvz.getLevel().getZombieFactory().getZombie(i)->getSprite(), 560, 95);
+					pvz.getLevel().getZombieFactory().getZombie(i)->move();
+					pvz.getLevel().getZombieFactory().getZombie(i)->startStop();
+					pvz.getLevel().getZombieFactory().getZombie(i)->attack(pvz.getLevel().getPlantFactory(), pvz.getGrid());
+				}
+				else {
+					pvz.getLevel().getZombieFactory().createZombie("simpleZombie");
+				}
 			}
-			else {
-				//cout << "Creating zombie" << endl;
-				pvz.getLevel().getZombieFactory().createZombie("simpleZombie");
+
+			if (sunNum > 15) {
+				sunNum = 0;
 			}
-		}
-
-		if (sunNum > 15) {
-			sunNum = 0;
-		}
-		for (; sunNum < 15; sunNum++) {
-			if (pvz.getLevel().getSunFactory().getSun(sunNum) != nullptr) {
-				window.draw(pvz.getLevel().getSunFactory().getSun(sunNum)->getSprite());
-				pvz.getLevel().getSunFactory().getSun(sunNum)->moveSun();
+			for (; sunNum < 15; sunNum++) {
+				if (pvz.getLevel().getSunFactory().getSun(sunNum) != nullptr) {
+					window.draw(pvz.getLevel().getSunFactory().getSun(sunNum)->getSprite());
+					pvz.getLevel().getSunFactory().getSun(sunNum)->moveSun();
+				}
+				else {
+					pvz.getLevel().getSunFactory().generateSun(sunNum);
+				}
 			}
-			else {
-				pvz.getLevel().getSunFactory().generateSun(sunNum);
-			}
+
+
+			cursor.setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window)));
+
+			window.draw(cursor);
+
+			//window.setSize(sf::Vector2u(1170, 604.5));
+			window.display();
 		}
-
-
-		cursor.setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window)));
-
-		window.draw(cursor);
-
-		//window.setSize(sf::Vector2u(1170, 604.5));
-		window.display();
 	}
+
 	return 0;
 }

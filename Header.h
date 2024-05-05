@@ -1,11 +1,4 @@
 #pragma once
-#include <iostream>
-#include <cstdlib>
-#include <SFML/Graphics.hpp>
-#include <ctime>
-#include <string>
-using namespace sf;
-using namespace std;
 
 const int MAX_PLANTS = 45;
 const int MAX_ZOMBIES = 30;
@@ -192,23 +185,23 @@ public:
 		position.x = x;
 		position.y = y;
 	}
-	virtual void attack(PlantFactory& plants) {
-		for (int i = 0; i < MAX_ZOMBIES; i++) {
-			if (plants.getPlant(i) != nullptr) {
-				if (plants.getPlant(i)->getPosition().x >= position.x &&
-					plants.getPlant(i)->getPosition().x <= position.x + getRect().width &&
-					plants.getPlant(i)->getPosition().y + plants.getPlant(i)->getRect().height >= position.y &&
-					plants.getPlant(i)->getPosition().y <= position.y + getRect().height) {
-					// Collision detected, apply damage to the plant
-					plants.getPlant(i)->setHealth(plants.getPlant(i)->getHealth() - damage);
-					if (plants.getPlant(i)->getHealth() <= 0) {
-						// Plant destroyed, remove it from the plant factory
-						plants.killPlant(i);
-					}
-				}
-			}
-		}
-	}
+	//virtual void attack(PlantFactory& plants) {
+	//	for (int i = 0; i < MAX_ZOMBIES; i++) {
+	//		if (plants.getPlant(i) != nullptr) {
+	//			if (plants.getPlant(i)->getPosition().x >= position.x &&
+	//				plants.getPlant(i)->getPosition().x <= position.x + getRect().width &&
+	//				plants.getPlant(i)->getPosition().y + plants.getPlant(i)->getRect().height >= position.y &&
+	//				plants.getPlant(i)->getPosition().y <= position.y + getRect().height) {
+	//				// Collision detected, apply damage to the plant
+	//				plants.getPlant(i)->setHealth(plants.getPlant(i)->getHealth() - damage);
+	//				if (plants.getPlant(i)->getHealth() <= 0) {
+	//					// Plant destroyed, remove it from the plant factory
+	//					plants.killPlant(i);
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	int getHealth() {
 		return health;
