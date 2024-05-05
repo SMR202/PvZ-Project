@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="coordinates.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sun.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plant.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Zombie.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleZombie.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LastLineDefence.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shovel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Waves.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZombieFactory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SunFactory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shooter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Peashooter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SnowPeashooter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RepeaterShooter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Walnut.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sunflower.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CherryBomb.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlantFactory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Times.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Levels.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BeginnersGarden.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scoreboard.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Zombie.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleZombie.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LastLineDefence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shovel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Waves.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZombieFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SunFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shooter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Peashooter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SnowPeashooter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RepeaterShooter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Walnut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sunflower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CherryBomb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlantFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Times.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BeginnersGarden.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scoreboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Constants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
