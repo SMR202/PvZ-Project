@@ -7,8 +7,8 @@
 using namespace sf;
 using namespace std;
 
-const int MAX_PLANTS = 6;
-const int MAX_ZOMBIES = 5;
+const int MAX_PLANTS = 45;
+const int MAX_ZOMBIES = 30;
 const int MAX_ZOMBIES_PER_TILE = 10;
 const int ROWS = 5;
 const int COLS = 9;
@@ -27,6 +27,16 @@ class Grid;
 class LastLineDefence;
 class Shovel;
 class Waves;
+class Plant;
+class Sun;
+class Sunflower;
+class Peashooter;
+class SnowPeashooter;
+class RepeaterShooter;
+class Walnut;
+class CherryBomb;
+class Shooter;
+
 
 struct coordinates {
 	int x;
@@ -100,7 +110,7 @@ public:
 	void setLimitX(int limitX) {
 		this->limitX = limitX;
 	}
-	virtual void attack(Zombie* target) = 0;
+	virtual void attack(ZombieFactory& zombies) = 0;
 	int getHealth() {
 		return health;
 	}
@@ -156,113 +166,13 @@ public:
 		this->plantSprite = plantsprite;
 	}
 	virtual ~Plant() {}
-};
 
-class Peashooter : public Plant {
-public:
-	Peashooter(int x = 0, int y = 0) : Plant(300, 20, 100, "peashooter", x, y, 108, 756) {
-		plantTexture.loadFromFile("Images/Peashooter.png");
-		plantRect = sf::IntRect(0, 0, 108, 130);
-		sf::Sprite peaShooterSprite(plantTexture, plantRect);
-		peaShooterSprite.setScale(0.5f, 0.5f);
-		peaShooterSprite.setPosition(position.x, position.y);
-		setSprite(peaShooterSprite);
+	virtual void drawPlant(RenderWindow& window) {
+		window.draw(plantSprite);
 	}
-
-	virtual void attack(Zombie* target) {}
-
-	virtual ~Peashooter() {}
-
-};
-
-class SnowPeashooter : public Plant {
-public:
-	SnowPeashooter(int x = 0, int y = 0) : Plant(300, 20, 175, "snowpeashooter", x, y, 124, 840) {
-		plantTexture.loadFromFile("Images/SnowPea.png");
-		plantRect = sf::IntRect(0, 0, 127, 131);
-		sf::Sprite snowPeaShooterSprite(plantTexture, plantRect);
-		snowPeaShooterSprite.setScale(0.5f, 0.5f);
-		snowPeaShooterSprite.setPosition(position.x, position.y);
-		setSprite(snowPeaShooterSprite);
-
+	void setHealth(int health) {
+		this->health = health;
 	}
-
-	virtual void attack(Zombie* target) {}
-
-	virtual ~SnowPeashooter() {}
-
-};
-
-class RepeaterShooter : public Plant {
-public:
-	RepeaterShooter(int x = 0, int y = 0) : Plant(300, 20, 175, "repeatershooter", x, y, 159, 597) {
-		plantTexture.loadFromFile("Images/Repeater.png");
-		plantRect = sf::IntRect(0, 0, 159, 157);
-		sf::Sprite repeaterShooterSprite(plantTexture, plantRect);
-		repeaterShooterSprite.setScale(0.5f, 0.5f);
-		repeaterShooterSprite.setPosition(position.x, position.y);
-		setSprite(repeaterShooterSprite);
-
-	}
-
-	virtual void attack(Zombie* target) {}
-
-	virtual ~RepeaterShooter() {}
-
-};
-
-class Walnut : public Plant {
-public:
-	Walnut(int x = 0, int y = 0) : Plant(4000, 0, 50, "walnut", x, y, 111, 440) {
-		plantTexture.loadFromFile("Images/Walnut.png");
-		plantRect = sf::IntRect(0, 0, 108, 130);
-		sf::Sprite walnutSprite(plantTexture, plantRect);
-		walnutSprite.setScale(0.5f, 0.5f);
-		walnutSprite.setPosition(position.x, position.y);
-		setSprite(walnutSprite);
-
-	}
-
-	virtual void attack(Zombie* target) {}
-
-	virtual ~Walnut() {}
-
-};
-
-class Sunflower : public Plant {
-public:
-	Sunflower(int x = 0, int y = 0) : Plant(300, 0, 100, "sunflower", x, y, 127, 630) {
-		plantTexture.loadFromFile("Images/Sunflower.png");
-		plantRect = sf::IntRect(0, 0, 133, 150);
-		sf::Sprite sunflowerSprite(plantTexture, plantRect);
-		sunflowerSprite.setScale(0.5f, 0.5f);
-		sunflowerSprite.setPosition(position.x, position.y);
-		setSprite(sunflowerSprite);
-
-	}
-
-	virtual void attack(Zombie* target) {}
-
-	virtual ~Sunflower() {}
-
-};
-
-class CherryBomb : public Plant {
-public:
-	CherryBomb(int x = 0, int y = 0) : Plant(300, 500, 150, "cherrybomb", x, y, 331, 3975) {
-		plantTexture.loadFromFile("Images/cherryBomb.png");
-		plantRect = sf::IntRect(0, 0, 331, 233);
-		sf::Sprite cherryBombSprite(plantTexture, plantRect);
-		cherryBombSprite.setScale(0.5f, 0.5f);
-		cherryBombSprite.setPosition(position.x, position.y);
-		setSprite(cherryBombSprite);
-
-	}
-
-	virtual void attack(Zombie* target) {}
-
-	virtual ~CherryBomb() {}
-
 };
 
 class Zombie {
@@ -270,18 +180,36 @@ protected:
 	int health, damage;
 	double speed;
 	string name;
-	Clock clock;
+	Clock moveClock;
+	Clock animationClock;
 	coordinates position;
 	sf::Texture zombieTexture;
 	sf::IntRect zombieRect;
 	sf::Sprite zombieSprite;
 
 public:
-	Zombie(int health = 100, int damage = 5, float speed = 1.0, string name = "plant", int x = 0, int y = 0) : health(health), damage(damage), speed(speed), clock() {
+	Zombie(int health = 100, int damage = 5, float speed = 1.0, string name = "plant", int x = 0, int y = 0) : health(health), damage(damage), speed(speed), moveClock(), animationClock() {
 		position.x = x;
 		position.y = y;
 	}
-	virtual void attack(Plant* target) = 0;
+	virtual void attack(PlantFactory& plants) {
+		for (int i = 0; i < MAX_ZOMBIES; i++) {
+			if (plants.getPlant(i) != nullptr) {
+				if (plants.getPlant(i)->getPosition().x >= position.x &&
+					plants.getPlant(i)->getPosition().x <= position.x + getRect().width &&
+					plants.getPlant(i)->getPosition().y + plants.getPlant(i)->getRect().height >= position.y &&
+					plants.getPlant(i)->getPosition().y <= position.y + getRect().height) {
+					// Collision detected, apply damage to the plant
+					plants.getPlant(i)->setHealth(plants.getPlant(i)->getHealth() - damage);
+					if (plants.getPlant(i)->getHealth() <= 0) {
+						// Plant destroyed, remove it from the plant factory
+						plants.killPlant(i);
+					}
+				}
+			}
+		}
+	}
+
 	int getHealth() {
 		return health;
 	}
@@ -300,7 +228,7 @@ public:
 	void setSpeed(double speed) {
 		this->speed = speed;
 	}
-	coordinates getPosition() {
+	coordinates& getPosition() {
 		return position;
 	}
 	void setPosition(int x, int y) {
@@ -314,11 +242,14 @@ public:
 		this->name = name;
 	}
 	void move() {
-		if (clock.getElapsedTime().asSeconds() >= 0.05) {
-			zombieSprite.move(-speed, 0);
-			clock.restart();
+        if (moveClock.getElapsedTime().asSeconds() >= 0.05) {
+			
+			position.x = zombieSprite.getPosition().x - speed;
+			position.y = zombieSprite.getPosition().y;
+            zombieSprite.setPosition(position.x, position.y);
+            moveClock.restart();
 
-		}
+        }
 	}
 	Sprite& getSprite() {
 		return zombieSprite;
@@ -331,19 +262,22 @@ public:
 	}
 	virtual ~Zombie() {}
 
+	Clock& getAnimationClock() {
+		return animationClock;
+	}
+
 };
 
 class SimpleZombie : public Zombie {
 public:
-SimpleZombie(int x = 720, int y = 230) : Zombie(300, 20, 5, "simpleZombie", x, y) {
-	zombieTexture.loadFromFile("Images/simpleZombie.png");
-	zombieRect = sf::IntRect(0, 0, 80, 100);
-	sf::Sprite sprite(zombieTexture, zombieRect);
-	//sprite.setScale(0.5f, 0.5f);
-	sprite.setPosition(position.x, position.y);
-	setSprite(sprite);
-}
-	virtual void attack(Plant* target) {}
+	SimpleZombie(int x = 720, int y = 230) : Zombie(300, 20, 5, "simpleZombie", x, y) {
+		zombieTexture.loadFromFile("Images/simpleZombie.png");
+		zombieRect = sf::IntRect(0, 0, 80, 100);
+		sf::Sprite sprite(zombieTexture, zombieRect);
+		//sprite.setScale(0.5f, 0.5f);
+		sprite.setPosition(position.x, position.y);
+		setSprite(sprite);
+	}
 	virtual ~SimpleZombie() {}
 };
 
@@ -437,6 +371,264 @@ public:
 	~Waves() {}
 };
 
+class ZombieFactory {
+protected:
+	Zombie* zombies[MAX_ZOMBIES];
+	Clock creationClock;
+	int zombiesCount;
+public:
+	ZombieFactory() : zombiesCount(0) {
+		for (int i = 0; i < MAX_ZOMBIES; ++i) {
+			this->zombies[i] = nullptr;
+		}
+	}
+	void createZombie(string name = "", int x = 720, int y = 295) {
+
+		int randRow[5]= { 20, 85, 160, 225, 295 }; // [0, 1, 2, 3, 4]
+		y = randRow[rand() % 5];
+		if (zombies[zombiesCount] == nullptr && creationClock.getElapsedTime().asSeconds() > 4) {
+			cout << "created zombie\n";
+			zombies[zombiesCount] = new SimpleZombie(x, y);
+			zombies[zombiesCount]->setPosition(x, y);
+			zombies[zombiesCount]->setName(name);
+			zombiesCount++;
+			creationClock.restart();
+		}
+
+	}
+	Zombie*& getZombie(int i) {
+		return zombies[i];
+	}
+	
+	void killZombie(int i) {
+		delete zombies[i];
+		zombies[i] = nullptr;
+	}
+
+	~ZombieFactory() {
+		for (int i = 0; i < MAX_ZOMBIES; i++) {
+			if (zombies[i] != nullptr)
+				delete this->zombies[i];
+		}
+	}
+	Clock& getClock() {
+		return creationClock;
+	}
+};
+
+class SunFactory {
+protected:
+	Sun* suns[15];
+	int totalSun;
+	Clock clock;
+public:
+	SunFactory(int totalSun = 50) : totalSun(totalSun), clock() {
+		for (int i = 0; i < 15; i++) {
+			suns[i] = nullptr;
+		}
+	}
+	void generateSun(int i = 0, int x = rand() % 710 + 180, int y = 0) {
+		if (clock.getElapsedTime().asSeconds() >= 4) {
+			suns[i] = new Sun();
+			suns[i]->getSprite().setPosition(x, y);
+			clock.restart();
+		}
+	}
+	Sun*& getSun(int i) {
+		return suns[i];
+	}
+	void collectSun(int x = 0, int y = 0){
+		totalSun += 25;
+		for (int i = 0; i < 15; i++) {
+			if (suns[i] != nullptr) {
+				delete suns[i];
+				suns[i] = nullptr;
+			}
+		}
+	}
+
+	~SunFactory() {
+		for (int i = 0; i < 15; i++) {
+			if (suns[i] != nullptr)
+				delete this->suns[i];
+		}
+	}
+};
+
+class Shooter : public Plant {
+protected:
+	coordinates bulletPosition;
+	sf::Texture bulletTexture;
+	sf::IntRect bulletRect;
+	sf::Sprite bulletSprite;
+	Clock bulletClock;
+
+public:
+	Shooter(int health = 100, int damage = 5, int cost = 100, string name = "shooter", int x = 0, int y = 0, int incrementX = 0, int limitX = 0) : Plant(health, damage, cost, name, x, y, incrementX, limitX) {
+		bulletPosition.x = x;
+		bulletPosition.y = y;
+	}
+	virtual void attack(ZombieFactory& zombies) {
+		if (bulletSprite.getPosition().x >= 800) {
+			bulletSprite.setPosition(position.x + 5, position.y);
+		}
+		if (bulletClock.getElapsedTime().asSeconds() >= 0.005) {
+			bulletPosition.x = bulletSprite.getPosition().x + 2;
+			bulletPosition.y = bulletSprite.getPosition().y;
+			bulletSprite.setPosition(bulletPosition.x, bulletPosition.y);
+			bulletClock.restart();
+		}
+		for (int i = 0; i < MAX_ZOMBIES ; i++) {
+			if (zombies.getZombie(i) != nullptr) {
+				if (bulletPosition.x + bulletRect.width >= zombies.getZombie(i)->getPosition().x && bulletPosition.x <= zombies.getZombie(i)->getPosition().x + zombies.getZombie(i)->getRect().width && bulletPosition.y + bulletRect.height >= zombies.getZombie(i)->getPosition().y && bulletPosition.y <= zombies.getZombie(i)->getPosition().y + zombies.getZombie(i)->getRect().height) {
+					// Collision detected, apply damage to the zombie
+					cout << "hit\n";
+					zombies.getZombie(i)->setHealth(zombies.getZombie(i)->getHealth() - damage);
+					if (zombies.getZombie(i)->getHealth() <= 0) {
+						zombies.killZombie(i);
+					}
+					bulletSprite.setPosition(position.x + 5, position.y);
+				}
+			}
+		}
+	}
+
+
+	void setSprite(Sprite& bulletsprite) {
+		this->bulletSprite = bulletsprite;
+	}
+	void setBulletPosition(int x, int y) {
+		bulletPosition.x = x;
+		bulletPosition.y = y;
+	}
+	Sprite& getSprite() {
+		return bulletSprite;
+	}
+	IntRect& getRect() {
+		return bulletRect;
+	}
+
+	virtual void drawPlant(RenderWindow& window) {
+		window.draw(plantSprite);
+		window.draw(bulletSprite);
+	}
+
+	virtual ~Shooter() {}
+};
+
+class Peashooter : public Shooter {
+public:
+	Peashooter(int x = 0, int y = 0) : Shooter(300, 300, 100, "peashooter", x, y, 108, 756) {
+
+		plantTexture.loadFromFile("Images/Peashooter.png");
+		plantRect = sf::IntRect(0, 0, 108, 130);
+		sf::Sprite peaShooterSprite(plantTexture, plantRect);
+		peaShooterSprite.setScale(0.5f, 0.5f);
+		peaShooterSprite.setPosition(position.x, position.y);
+		Plant::setSprite(peaShooterSprite);
+
+		bulletTexture.loadFromFile("Images/pea_projectile.png");
+		bulletRect = sf::IntRect(0, 0, 24, 24);
+		sf::Sprite peaBulletSprite(bulletTexture, bulletRect);
+		peaBulletSprite.setPosition(position.x + 5, position.y);
+		Shooter::setSprite(peaBulletSprite);
+	}
+
+
+	virtual ~Peashooter() {}
+
+};
+
+class SnowPeashooter : public Plant {
+public:
+	SnowPeashooter(int x = 0, int y = 0) : Plant(300, 20, 175, "snowpeashooter", x, y, 124, 840) {
+		plantTexture.loadFromFile("Images/SnowPea.png");
+		plantRect = sf::IntRect(0, 0, 127, 131);
+		sf::Sprite snowPeaShooterSprite(plantTexture, plantRect);
+		snowPeaShooterSprite.setScale(0.5f, 0.5f);
+		snowPeaShooterSprite.setPosition(position.x, position.y);
+		setSprite(snowPeaShooterSprite);
+
+	}
+
+	virtual void attack(ZombieFactory& zombies) {}
+
+	virtual ~SnowPeashooter() {}
+
+};
+
+class RepeaterShooter : public Plant {
+public:
+	RepeaterShooter(int x = 0, int y = 0) : Plant(300, 20, 175, "repeatershooter", x, y, 159, 597) {
+		plantTexture.loadFromFile("Images/Repeater.png");
+		plantRect = sf::IntRect(0, 0, 159, 157);
+		sf::Sprite repeaterShooterSprite(plantTexture, plantRect);
+		repeaterShooterSprite.setScale(0.5f, 0.5f);
+		repeaterShooterSprite.setPosition(position.x, position.y);
+		setSprite(repeaterShooterSprite);
+
+	}
+
+	virtual void attack(ZombieFactory& zombies) {}
+
+	virtual ~RepeaterShooter() {}
+
+};
+
+class Walnut : public Plant {
+public:
+	Walnut(int x = 0, int y = 0) : Plant(4000, 0, 50, "walnut", x, y, 111, 440) {
+		plantTexture.loadFromFile("Images/Walnut.png");
+		plantRect = sf::IntRect(0, 0, 108, 130);
+		sf::Sprite walnutSprite(plantTexture, plantRect);
+		walnutSprite.setScale(0.5f, 0.5f);
+		walnutSprite.setPosition(position.x, position.y);
+		setSprite(walnutSprite);
+
+	}
+
+	virtual void attack(ZombieFactory& zombies) {}
+
+	virtual ~Walnut() {}
+
+};
+
+class Sunflower : public Plant {
+public:
+	Sunflower(int x = 0, int y = 0) : Plant(300, 0, 100, "sunflower", x, y, 127, 630) {
+		plantTexture.loadFromFile("Images/Sunflower.png");
+		plantRect = sf::IntRect(0, 0, 133, 150);
+		sf::Sprite sunflowerSprite(plantTexture, plantRect);
+		sunflowerSprite.setScale(0.5f, 0.5f);
+		sunflowerSprite.setPosition(position.x, position.y);
+		setSprite(sunflowerSprite);
+
+	}
+
+	virtual void attack(ZombieFactory& zombies) {}
+
+	virtual ~Sunflower() {}
+
+};
+
+class CherryBomb : public Plant {
+public:
+	CherryBomb(int x = 0, int y = 0) : Plant(300, 500, 150, "cherrybomb", x, y, 331, 3975) {
+		plantTexture.loadFromFile("Images/cherryBomb.png");
+		plantRect = sf::IntRect(0, 0, 331, 233);
+		sf::Sprite cherryBombSprite(plantTexture, plantRect);
+		cherryBombSprite.setScale(0.5f, 0.5f);
+		cherryBombSprite.setPosition(position.x, position.y);
+		setSprite(cherryBombSprite);
+
+	}
+
+	virtual void attack(ZombieFactory& zombies) {}
+
+	virtual ~CherryBomb() {}
+
+};
+
 class PlantFactory {
 protected:
 	Plant* plants[MAX_PLANTS];
@@ -490,73 +682,9 @@ public:
 	Plant*& getPlant(int i) {
 		return plants[i];
 	}
-};
-
-class ZombieFactory {
-protected:
-	Zombie* zombies[MAX_ZOMBIES];
-public:
-	ZombieFactory() {
-		for (int i = 0; i < MAX_ZOMBIES; ++i) {
-			this->zombies[i] = nullptr;
-		}
-		zombies[0] = new SimpleZombie();
-	}
-	Zombie*& createZombie(string name, int x = 720, int y = 230) {
-		int i = 0;
-		if (zombies[i] != nullptr) {
-			zombies[i]->setPosition(x, y);
-			zombies[i]->setName(name);
-		}
-		return zombies[i];
-	}
-	Zombie*& getZombie(int i) {
-		return zombies[i];
-	}
-	~ZombieFactory() {
-		for (int i = 0; i < MAX_ZOMBIES; i++) {
-			if (zombies[i] != nullptr)
-				delete this->zombies[i];
-		}
-	}
-};
-
-class SunFactory {
-protected:
-	Sun* suns[15];
-	int totalSun;
-	Clock clock;
-public:
-	SunFactory(int totalSun = 50) : totalSun(totalSun), clock() {
-		for (int i = 0; i < 15; i++) {
-			suns[i] = nullptr;
-		}
-	}
-	void generateSun(int i = 0, int x = rand() % 710 + 180, int y = 0) {
-		if (clock.getElapsedTime().asSeconds() >= 4) {
-			suns[i] = new Sun();
-			suns[i]->getSprite().setPosition(x, y);
-			clock.restart();
-		}
-	}
-	Sun*& getSun(int i) {
-		return suns[i];
-	}
-	void collectSun(int x = 0, int y = 0){
-		totalSun += 25;
-		for (int i = 0; i < 15; i++) {
-			if (suns[i] != nullptr) {
-				delete suns[i];
-				suns[i] = nullptr;
-			}
-		}
-	}
-
-	~SunFactory() {
-		for (int i = 0; i < 15; i++) {
-			if (suns[i] != nullptr)
-				delete this->suns[i];
-		}
+	void killPlant(int i) {
+		delete plants[i];
+		plants[i] = nullptr;
 	}
 };
 
@@ -565,12 +693,10 @@ protected:
 
 };
 
-
 class State {
 protected:
 
 };
-
 
 class Levels {
 protected:
